@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30" status="warn">
+    <Properties>
+        <Property name="basePath">./</Property>
+        <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    ${pattern}
+                </pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile name="RollingFileAppender"
+                     fileName="${basePath}/deletevolumes.log"
+                     filePattern="${basePath}/deletevolumes-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <pattern>
+                    ${pattern}
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5">
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="WARN" additivity="false">
+            <appender-ref ref="RollingFileAppender"/>
+<!--            <appender-ref ref="ConsoleAppender"/>-->
+        </Root>
+        <Logger name="com.cottagecoders" additivity="false" level="INFO">
+            <appender-ref ref="RollingFileAppender"/>
+<!--            <appender-ref ref="ConsoleAppender"/>-->
+        </Logger>
+    </Loggers>
+</Configuration>

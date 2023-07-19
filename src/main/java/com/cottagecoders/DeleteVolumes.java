@@ -2,9 +2,7 @@ package com.cottagecoders;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.cottagecoders.simpleslack.FetchMembers;
 import com.cottagecoders.simpleslack.SendSlackMessage;
-import com.cottagecoders.simpleslack.userlist.Member;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,9 +19,7 @@ import software.amazon.awssdk.services.ec2.model.Instance;
 import software.amazon.awssdk.services.ec2.model.Reservation;
 import software.amazon.awssdk.services.ec2.model.Volume;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.Map;
 
 
 public class DeleteVolumes {
@@ -109,34 +105,9 @@ public class DeleteVolumes {
       return;
     }
 
-    try {
-      FetchMembers fetch = new FetchMembers();
-
-      Map<String, Member> members = null;
-      // gather list of members from Slack
-      members = fetch.fetchAllMembers();
-
-
-      for (String s : slackDisplayNames) {
-        // get specific user
-        Member member = members.get(s.trim());
-        if (member == null) {
-          // user lookup failed.
-          continue;
-        }
-        // TODO: delete debugging code.
-        if (member.getName().contains("bobp") || member.getName().contains("lark")) {
-          System.out.println("stop. name matched");
-        }
-
-        SendSlackMessage ssm = new SendSlackMessage();
-        ssm.sendDM(member.getId(), msg);
-      }
-
-    } catch (IOException | InterruptedException ex) {
-      System.out.println("fetch.fetchAllMembers() exception: " + ex.getMessage());
-      ex.printStackTrace();
-      System.exit(12);
+    SendSlackMessage ssm = new SendSlackMessage();
+    for (String displayName : slackDisplayNames) {
+      ssm.sendDMByDisplayName(displayName, System.getenv("SLACKLIB_TOKEN"), msg);
     }
   }
 }
